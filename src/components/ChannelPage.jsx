@@ -22,6 +22,7 @@ export default function ChannelPage({ slug }) {
   }
 
   const channelName = items[0].channelName || items[0].channel;
+  const channelAvatar = items.find((v) => v.avatarUrl)?.avatarUrl || "";
   const isSubd = subs.includes(channelName);
 
   return (
@@ -43,7 +44,7 @@ export default function ChannelPage({ slug }) {
 
       <div className="banner" />
       <div className="head">
-        <div className="avatar" />
+        <div className="avatar" style={channelAvatar ? { backgroundImage:`url(${channelAvatar})` } : undefined} />
         <div>
           <div className="cName">{channelName}</div>
           <div className="cMeta">{items.length} videos</div>

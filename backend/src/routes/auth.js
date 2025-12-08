@@ -124,7 +124,10 @@ router.put("/profile", authRequired, asyncHandler(async (req, res) => {
    try {
      await Video.updateMany(
        { owner: req.user._id },
-       { avatarUrl: req.user.avatarUrl || "" },
+       {
+         avatarUrl: req.user.avatarUrl || "",
+         ...(body.name ? { channelName: req.user.name } : {}),
+       },
      );
    } catch { /* ignore */ }
 

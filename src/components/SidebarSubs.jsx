@@ -2,8 +2,17 @@ import React from "react";
 import { useNotTube } from "../state/NotTubeState.jsx";
 
 export default function SidebarSubs() {
-  const { subs } = useNotTube();
+  const { subs, videos, user } = useNotTube();
   if (!subs || subs.length === 0) return null;
+
+  const byName = new Map();
+  videos.forEach((v) => {
+    const name = v.channelName || v.channel;
+    if (!name) return;
+    if (!byName.has(name) && v.avatarUrl) {
+      byName.set(name, v.avatarUrl);
+    }
+  });
 
   return (
     <div className="sb-subs">
@@ -27,7 +36,12 @@ export default function SidebarSubs() {
             href={`#/channel/${toSlug(name)}`}
             title={name}
           >
-            <div className="sb-ava" />
+            <div
+              className="sb-ava"
+              style={{
+                backgroundImage: (byName.get(name) || (user?.name === name ? user?.avatarUrl : "")) ? `url(${byName.get(name) || user?.avatarUrl})` : undefined,
+              }}
+            />
             <div className="sb-name">{name}</div>
             <div className="sb-open" aria-hidden>↗</div>
           </a>
