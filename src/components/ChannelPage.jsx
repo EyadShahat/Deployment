@@ -41,6 +41,15 @@ export default function ChannelPage({ slug }) {
     }
     return ownerHeader;
   })();
+
+  const channelBio = (() => {
+    const withBio = items.find((v) => v.owner?.bio);
+    const ownerBio = withBio?.owner?.bio || "";
+    if (user?.name && channelName && user.name === channelName && user.bio) {
+      return user.bio;
+    }
+    return ownerBio;
+  })();
   const isSubd = subs.includes(channelName);
 
   return (
@@ -70,6 +79,7 @@ export default function ChannelPage({ slug }) {
         <div>
           <div className="cName">{channelName}</div>
           <div className="cMeta">{items.length} videos</div>
+          {channelBio && <div style={{ marginTop:4, color:"#4b5563", fontSize:13 }}>{channelBio}</div>}
         </div>
         <button
           className={`subBtn ${isSubd ? "subd" : ""}`}

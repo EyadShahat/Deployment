@@ -25,14 +25,19 @@ function canEdit(user, video) {
 router.get("/", asyncHandler(async (req, res) => {
   const { search } = req.query;
   const baseQuery = search
-    ? { title: { $regex: search, $options: "i" } }
+    ? {
+        $or: [
+          { title: { $regex: search, $options: "i" } },
+          { channelName: { $regex: search, $options: "i" } },
+        ],
+      }
     : {};
   const query = { ...baseQuery, hidden: { $ne: true } };
 
   const videos = await Video.find(query)
     .sort({ createdAt: -1 })
     .limit(100)
-    .populate("owner", "avatarUrl name headerUrl")
+    .populate("owner", "avatarUrl name headerUrl bio")
     .lean();
 
   const normalized = videos.map((v) => ({
@@ -64,12 +69,13 @@ router.post("/", authRequired, asyncHandler(async (req, res) => {
 }));
 
 router.get("/:id", asyncHandler(async (req, res) => {
-  const video = await Video.findById(req.params.id).populate("owner", "avatarUrl name headerUrl").lean();
+  const video = await Video.findById(req.params.id).populate("owner", "avatarUrl name headerUrl bio").lean();
   if (!video) return res.status(404).json({ error: "Video not found" });
   const merged = {
     ...video,
     avatarUrl: video.avatarUrl || video.owner?.avatarUrl || "",
     channelName: video.channelName || video.owner?.name || "Channel",
+    ownerBio: video.owner?.bio || "",
   };
   res.json({ video: merged });
 }));
