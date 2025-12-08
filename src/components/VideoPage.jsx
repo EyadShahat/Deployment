@@ -244,24 +244,38 @@ export default function VideoPage({ id }) {
         .ava { width:44px; height:44px; background:#0f172a center/cover no-repeat; border-radius:999px; }
         .chName { font-weight:800; }
         .meta { color:#6b7280; font-size:13px; }
-        .actions { margin-left:auto; display:flex; gap:10px; align-items:center; }
+
+
+                .actions {
+          margin-left: auto;
+          display: flex;
+          gap: 10px;
+          align-items: center;
+        }
+
         .btn { height:36px; padding:0 14px; border:1px solid #e5e7eb; background:#fff; border-radius:999px; font-weight:700; cursor:pointer; }
         .btn.primary { background:#111827; color:#fff; border-color:#111827; }
-        .saveControls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:0; position:relative; }
+
+       .saveControls {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
         .select { height:32px; border:1px solid #d1d5db; border-radius:10px; padding:0 8px; }
         .smallInput { height:32px; border:1px solid #d1d5db; border-radius:10px; padding:0 8px; }
-        .saveBox {
-          position:absolute;
-          top:42px;
-          left:-140px;
-          z-index:20;
-          background:#fff;
-          border:1px solid #e5e7eb;
-          border-radius:12px;
-          padding:10px;
-          box-shadow:0 8px 20px rgba(0,0,0,0.08);
-          min-width:220px;
-        }
+      .saveBox {
+  position: absolute;
+  top: 42px;   /* or whatever looks best */
+  right: 0;    /* or left: 0; depending on where you want it */
+  z-index: 20;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  min-width: 220px;
+}
         .saveBoxActions { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
 
         .descBox { margin-top:10px; border:1px solid var(--line); background:#fff; border-radius:12px; padding:12px; }
