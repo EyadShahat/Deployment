@@ -22,7 +22,12 @@ export default function ChannelPage({ slug }) {
   }
 
   const channelName = items[0].channelName || items[0].channel;
-  const channelAvatar = items.find((v) => v.avatarUrl)?.avatarUrl || "";
+  const channelAvatar = (() => {
+    const withAvatar = items.find((v) => v.avatarUrl);
+    if (withAvatar?.avatarUrl) return withAvatar.avatarUrl;
+    const withOwner = items.find((v) => v.owner?.avatarUrl);
+    return withOwner?.owner?.avatarUrl || "";
+  })();
   const isSubd = subs.includes(channelName);
 
   return (

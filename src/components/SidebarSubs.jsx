@@ -9,8 +9,9 @@ export default function SidebarSubs() {
   videos.forEach((v) => {
     const name = v.channelName || v.channel;
     if (!name) return;
-    if (!byName.has(name) && v.avatarUrl) {
-      byName.set(name, v.avatarUrl);
+    const ava = v.avatarUrl || v.owner?.avatarUrl;
+    if (!byName.has(name) && ava) {
+      byName.set(name, ava);
     }
   });
 
