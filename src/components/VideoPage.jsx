@@ -90,6 +90,11 @@ export default function VideoPage({ id }) {
     loadComments(video.id);
   }
 
+  async function deleteComment(id) {
+    await apiRequest(`/comments/${id}`, { method: "DELETE" });
+    setComments((prev) => prev.filter((c) => c._id !== id));
+  }
+
   if (!video) {
     return (
       <ShellLayout>
@@ -107,6 +112,7 @@ export default function VideoPage({ id }) {
   const src = video.src || "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
   const uploaderId = video.owner;
   const accountFlagged = user?.accountStatus === "flagged";
+  const isUploader = user && uploaderId && String(user.id) === String(uploaderId);
 
   const [q, setQ] = React.useState("");
   const goSearch = () => {
@@ -298,23 +304,42 @@ export default function VideoPage({ id }) {
                     </div>
                   )}
                 </div>
-                {isAdmin && (
-                  <button
-                    type="button"
-                    className="btn"
-                    style={{
-                      height:28,
-                      padding:"0 10px",
-                      fontSize:12,
-                      background: flaggedComments.has(c._id) ? "#16a34a" : undefined,
-                      color: flaggedComments.has(c._id) ? "#fff" : undefined,
-                      borderColor: flaggedComments.has(c._id) ? "#16a34a" : undefined,
-                    }}
-                    onClick={() => flagComment(c._id)}
-                  >
-                    {flaggedComments.has(c._id) ? "Flagged" : "Flag"}
-                  </button>
-                )}
+                <div style={{ display:"flex", gap:8 }}>
+                  {isUploader && (
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{
+                        height:28,
+                        padding:"0 10px",
+                        fontSize:12,
+                        background:"#fee2e2",
+                        color:"#991b1b",
+                        borderColor:"#fecaca",
+                      }}
+                      onClick={() => deleteComment(c._id)}
+                    >
+                      Delete
+                    </button>
+                  )}
+                  {isAdmin && (
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{
+                        height:28,
+                        padding:"0 10px",
+                        fontSize:12,
+                        background: flaggedComments.has(c._id) ? "#16a34a" : undefined,
+                        color: flaggedComments.has(c._id) ? "#fff" : undefined,
+                        borderColor: flaggedComments.has(c._id) ? "#16a34a" : undefined,
+                      }}
+                      onClick={() => flagComment(c._id)}
+                    >
+                      {flaggedComments.has(c._id) ? "Flagged" : "Flag"}
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>

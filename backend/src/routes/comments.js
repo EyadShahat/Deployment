@@ -40,7 +40,15 @@ router.delete("/:id", authRequired, asyncHandler(async (req, res) => {
 
   const isOwner = String(comment.user) === String(req.user._id);
   const isAdmin = req.user.role === "admin";
-  if (!isOwner && !isAdmin) return res.status(403).json({ error: "Not allowed" });
+  let isVideoOwner = false;
+
+  if (!isOwner && !isAdmin) {
+    const video = await Video.findById(comment.video).select("owner");
+    if (video && String(video.owner) === String(req.user._id)) {
+      isVideoOwner = true;
+    }
+    if (!isVideoOwner) return res.status(403).json({ error: "Not allowed" });
+  }
 
   await comment.deleteOne();
   res.json({ ok: true });
