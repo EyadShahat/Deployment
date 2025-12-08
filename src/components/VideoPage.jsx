@@ -253,6 +253,7 @@ export default function VideoPage({ id }) {
           position:absolute;
           top:42px;
           left:0;
+          transform: translateX(calc(-100% + 60px));
           z-index:20;
           background:#fff;
           border:1px solid #e5e7eb;
