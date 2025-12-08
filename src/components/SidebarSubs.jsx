@@ -23,7 +23,7 @@ export default function SidebarSubs() {
         .sb-list { display:flex; flex-direction:column; gap:8px; max-height: 220px; overflow:auto; padding-right: 4px; }
         .sb-row { display:flex; align-items:center; gap:10px; padding:8px 8px; border-radius:10px; text-decoration:none; color:inherit; }
         .sb-row:hover { background:#f3f4f6; }
-        .sb-ava { width:28px; height:28px; border-radius:999px; background:#0f172a; flex:0 0 auto; }
+        .sb-ava { width:28px; height:28px; border-radius:999px; background:#0f172a center/cover no-repeat; flex:0 0 auto; }
         .sb-name { font-size:14px; font-weight:600; flex:1 1 auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
         .sb-open { opacity:.7; }
       `}</style>

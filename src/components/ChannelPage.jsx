@@ -35,7 +35,11 @@ export default function ChannelPage({ slug }) {
       <style>{`
         .banner { height:160px; border-radius:14px; background:#e5e7eb; }
         .head { display:flex; align-items:flex-end; gap:14px; margin-top:-28px; }
-        .avatar { width:84px; height:84px; border-radius:999px; background:#0f172a; border:4px solid #fff; }
+        .avatar {
+          width:84px; height:84px; border-radius:999px;
+          background:#0f172a center/cover no-repeat;
+          border:4px solid #fff;
+        }
         .cName { font-weight:900; font-size:24px; letter-spacing:-.01em; }
         .cMeta { color:#6b7280; font-size:13px; margin-top:2px; }
         .subBtn { margin-left:auto; height:40px; padding:0 14px; border-radius:999px; border:1px solid #d1d5db; background:#fff; font-weight:700; cursor:pointer; }
