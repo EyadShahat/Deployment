@@ -234,7 +234,7 @@ export default function VideoPage({ id }) {
         .ava { width:44px; height:44px; background:#0f172a center/cover no-repeat; border-radius:999px; }
         .chName { font-weight:800; }
         .meta { color:#6b7280; font-size:13px; }
-        .actions { margin-left:auto; display:flex; gap:10px; }
+        .actions { margin-left:auto; display:flex; gap:10px; align-items:flex-start; }
         .btn { height:36px; padding:0 14px; border:1px solid #e5e7eb; background:#fff; border-radius:999px; font-weight:700; cursor:pointer; }
         .btn.primary { background:#111827; color:#fff; border-color:#111827; }
         .saveControls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:0; position:relative; }
@@ -251,6 +251,7 @@ export default function VideoPage({ id }) {
           padding:10px;
           box-shadow:0 8px 20px rgba(0,0,0,0.08);
           min-width:280px;
+          transform: translateX(50%);
         }
         .saveBoxActions { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
 
