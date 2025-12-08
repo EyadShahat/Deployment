@@ -251,9 +251,9 @@ export default function VideoPage({ id }) {
         .smallInput { height:32px; border:1px solid #d1d5db; border-radius:10px; padding:0 8px; }
         .saveBox {
           position:absolute;
-          top:40px;
+          top:42px;
           left:0;
-          z-index:5;
+          z-index:20;
           background:#fff;
           border:1px solid #e5e7eb;
           border-radius:12px;
