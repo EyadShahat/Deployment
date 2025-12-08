@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import User from "../models/User.js";
+import Video from "../models/Video.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { authRequired } from "../middleware/auth.js";
 
@@ -120,18 +121,12 @@ router.put("/profile", authRequired, asyncHandler(async (req, res) => {
   await req.user.save();
 
    // keep avatars in sync on existing videos/comments for this user
-  await Promise.all([
-    // update videos owned by this user
-    (async () => {
-      try {
-        const Video = (await import("../models/Video.js")).default;
-        await Video.updateMany(
-          { owner: req.user._id },
-          { avatarUrl: req.user.avatarUrl || "" },
-        );
-      } catch { /* ignore */ }
-    })(),
-  ]);
+   try {
+     await Video.updateMany(
+       { owner: req.user._id },
+       { avatarUrl: req.user.avatarUrl || "" },
+     );
+   } catch { /* ignore */ }
 
   res.json({ user: publicUser(req.user) });
 }));

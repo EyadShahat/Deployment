@@ -29,8 +29,19 @@ router.get("/", asyncHandler(async (req, res) => {
     : {};
   const query = { ...baseQuery, hidden: { $ne: true } };
 
-  const videos = await Video.find(query).sort({ createdAt: -1 }).limit(100).lean();
-  res.json({ videos });
+  const videos = await Video.find(query)
+    .sort({ createdAt: -1 })
+    .limit(100)
+    .populate("owner", "avatarUrl name")
+    .lean();
+
+  const normalized = videos.map((v) => ({
+    ...v,
+    avatarUrl: v.avatarUrl || v.owner?.avatarUrl || "",
+    channelName: v.channelName || v.owner?.name || "Channel",
+  }));
+
+  res.json({ videos: normalized });
 }));
 
 router.get("/mine", authRequired, asyncHandler(async (req, res) => {
@@ -53,9 +64,14 @@ router.post("/", authRequired, asyncHandler(async (req, res) => {
 }));
 
 router.get("/:id", asyncHandler(async (req, res) => {
-  const video = await Video.findById(req.params.id).lean();
+  const video = await Video.findById(req.params.id).populate("owner", "avatarUrl name").lean();
   if (!video) return res.status(404).json({ error: "Video not found" });
-  res.json({ video });
+  const merged = {
+    ...video,
+    avatarUrl: video.avatarUrl || video.owner?.avatarUrl || "",
+    channelName: video.channelName || video.owner?.name || "Channel",
+  };
+  res.json({ video: merged });
 }));
 
 router.put("/:id", authRequired, asyncHandler(async (req, res) => {
