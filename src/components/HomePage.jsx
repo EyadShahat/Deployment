@@ -19,9 +19,10 @@ export default function HomePage() {
         :root { --fg:#0b0b0b; --muted:#6b7280; --line:#e5e7eb; --bg:#f9fafb; }
         * { box-sizing: border-box; }
         .topbar { position: sticky; top: 0; z-index: 10; display:flex; align-items:center; gap:12px; padding:10px 12px; background: var(--bg); border-bottom:1px solid #e5e7eb; border-radius:12px; margin-bottom:10px; }
-        .searchWrap { display:flex; align-items:center; flex:1; background:#fff; border:1px solid #d1d5db; border-radius:999px; height:40px; overflow:hidden; }
-        .searchInput { flex:1; height:100%; border:0; outline:none; background:transparent; color:#111; padding:0 14px; font-size:14px; }
-        .searchBtn { width:44px; height:40px; border:0; background:#f3f4f6; color:#111; cursor:pointer; }
+        .searchWrap { display:flex; align-items:center; flex:1; background:#fff; border:1px solid #d1d5db; border-radius:16px; height:44px; overflow:hidden; padding:0 10px; gap:8px; }
+        .searchIcon { font-size:18px; opacity:0.6; }
+        .searchInput { flex:1; height:100%; border:0; outline:none; background:transparent; color:#111; padding:0 4px; font-size:14px; }
+        .searchBtn { height:32px; border:0; background:#111827; color:#fff; cursor:pointer; padding:0 12px; border-radius:12px; font-weight:700; }
         .createBtn { height:40px; padding:0 14px; border-radius:999px; border:1px solid #d1d5db; background:#fff; color:#111; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; }
         .avatarBtn { width:36px; height:36px; border-radius:999px; background:#0f172a; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; }
         .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: clamp(10px, 1.6vw, 16px); align-items:start; }
@@ -44,6 +45,7 @@ export default function HomePage() {
       {/* TOP BAR with NO <form> */}
       <div className="topbar" role="banner">
         <div className="searchWrap" role="search">
+          <span className="searchIcon" aria-hidden>🔍</span>
           <input
             className="searchInput"
             value={q}
