@@ -25,6 +25,10 @@ export default function VideoPage({ id }) {
   const [accountInfo, setAccountInfo] = React.useState(null);
   const [flaggedComments, setFlaggedComments] = React.useState(new Set());
   const [subscriberCount, setSubscriberCount] = React.useState(null);
+  const [saveCategory, setSaveCategory] = React.useState("none");
+  const [newCategory, setNewCategory] = React.useState("");
+  const [categories, setCategories] = React.useState(["none"]);
+  const [assignments, setAssignments] = React.useState({});
   const isAdmin = user?.role === "admin";
 
   React.useEffect(() => {
@@ -58,6 +62,23 @@ export default function VideoPage({ id }) {
       .then((res) => setSubscriberCount(res.count ?? null))
       .catch(() => setSubscriberCount(null));
   }, [video?.channelName, video?.channel]);
+
+  React.useEffect(() => {
+    try {
+      const raw = localStorage.getItem("nt_saved_categories");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setAssignments(parsed.assignments || {});
+        setCategories(["none", ...(parsed.categories || [])]);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  React.useEffect(() => {
+    if (!video) return;
+    const assigned = assignments[video.id] || "none";
+    setSaveCategory(assigned || "none");
+  }, [video?.id, assignments]);
 
   async function loadComments(vid) {
     const res = await apiRequest(`/comments/video/${vid}`);
@@ -93,6 +114,44 @@ export default function VideoPage({ id }) {
   async function deleteComment(id) {
     await apiRequest(`/comments/${id}`, { method: "DELETE" });
     setComments((prev) => prev.filter((c) => c._id !== id));
+  }
+
+  function persistCategories(nextAssignments, nextCategories) {
+    setAssignments(nextAssignments);
+    setCategories(nextCategories);
+    try {
+      localStorage.setItem("nt_saved_categories", JSON.stringify({
+        assignments: nextAssignments,
+        categories: nextCategories.filter((c) => c !== "none"),
+      }));
+    } catch { /* ignore */ }
+  }
+
+  function addCategory() {
+    const name = newCategory.trim();
+    if (!name) return;
+    if (categories.includes(name)) {
+      setSaveCategory(name);
+      setNewCategory("");
+      return;
+    }
+    const nextCats = [...categories, name];
+    persistCategories(assignments, nextCats);
+    setSaveCategory(name);
+    setNewCategory("");
+  }
+
+  async function handleSaveToggle() {
+    await toggleSave(video.id);
+    if (saveCategory && saveCategory !== "none") {
+      const next = { ...assignments, [video.id]: saveCategory };
+      const nextCats = categories.includes(saveCategory) ? categories : [...categories, saveCategory];
+      persistCategories(next, nextCats);
+    } else {
+      const next = { ...assignments };
+      delete next[video.id];
+      persistCategories(next, categories);
+    }
   }
 
   if (!video) {
@@ -171,6 +230,9 @@ export default function VideoPage({ id }) {
         .actions { margin-left:auto; display:flex; gap:10px; }
         .btn { height:36px; padding:0 14px; border:1px solid #e5e7eb; background:#fff; border-radius:999px; font-weight:700; cursor:pointer; }
         .btn.primary { background:#111827; color:#fff; border-color:#111827; }
+        .saveControls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+        .select { height:32px; border:1px solid #d1d5db; border-radius:10px; padding:0 8px; }
+        .smallInput { height:32px; border:1px solid #d1d5db; border-radius:10px; padding:0 8px; }
 
         .descBox { margin-top:10px; border:1px solid var(--line); background:#fff; border-radius:12px; padding:12px; }
         .descText { color:#111; font-size:14px; line-height:1.45; white-space:pre-wrap; }
@@ -255,9 +317,23 @@ export default function VideoPage({ id }) {
               <button className={`btn ${isSubd ? "primary" : ""}`} onClick={() => toggleSubscribe(video.channelName || video.channel || "Channel")}>
                 {isSubd ? "Subscribed ✓" : "Subscribe"}
               </button>
-              <button className={`btn ${isSaved ? "primary" : ""}`} onClick={() => toggleSave(video.id)}>
-                {isSaved ? "Saved ✓" : "Save"}
-              </button>
+              <div className="saveControls">
+                <button className={`btn ${isSaved ? "primary" : ""}`} type="button" onClick={handleSaveToggle}>
+                  {isSaved ? "Saved ✓" : "Save"}
+                </button>
+                <select className="select" value={saveCategory} onChange={(e)=>setSaveCategory(e.target.value)}>
+                  {categories.map((c)=>(
+                    <option key={c} value={c}>{c === "none" ? "No category" : c}</option>
+                  ))}
+                </select>
+                <input
+                  className="smallInput"
+                  value={newCategory}
+                  onChange={(e)=>setNewCategory(e.target.value)}
+                  placeholder="New category"
+                />
+                <button className="btn" type="button" onClick={addCategory}>Add</button>
+              </div>
             </div>
           </div>
 
