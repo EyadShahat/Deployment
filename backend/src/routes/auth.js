@@ -12,8 +12,9 @@ const router = express.Router();
 const avatarSchema = z.string().optional().refine((val) => {
   if (!val) return true;
   if (val.startsWith("/avatars/")) return true;
+  if (val.startsWith("data:image/")) return true; // allow data URLs from uploads
   try { new URL(val); return true; } catch { return false; }
-}, { message: "avatarUrl must be a full URL or start with /avatars/" });
+}, { message: "avatarUrl must be a full URL, data URI, or start with /avatars/" });
 
 const credsSchema = z.object({
   email: z.string().email(),

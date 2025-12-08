@@ -16,6 +16,8 @@ export default function ProfileSettings() {
   const [currentPassword, setCurrentPassword] = React.useState("");
   const [newPassword, setNewPassword] = React.useState("");
   const [pwStatus, setPwStatus] = React.useState("");
+  const [avatarDrag, setAvatarDrag] = React.useState(false);
+  const [headerDrag, setHeaderDrag] = React.useState(false);
 
   React.useEffect(() => {
     setDisplayName(user?.name || "");
@@ -41,6 +43,27 @@ export default function ProfileSettings() {
     setSaving(false);
     setSavedAt(new Date());
   }
+
+  const handleFileToDataUrl = (file, setter) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setter(reader.result?.toString() || "");
+    reader.readAsDataURL(file);
+  };
+
+  const onAvatarDrop = (e) => {
+    e.preventDefault();
+    setAvatarDrag(false);
+    const file = e.dataTransfer.files?.[0];
+    handleFileToDataUrl(file, setAvatarUrl);
+  };
+
+  const onHeaderDrop = (e) => {
+    e.preventDefault();
+    setHeaderDrag(false);
+    const file = e.dataTransfer.files?.[0];
+    handleFileToDataUrl(file, setHeaderUrl);
+  };
 
   async function handlePassword(e) {
     e.preventDefault();
@@ -76,6 +99,8 @@ export default function ProfileSettings() {
         .avatar { width:88px; height:88px; border-radius:999px; background:#e5e7eb center/cover no-repeat; border:1px solid #e5e7eb; }
         .stack { display:flex; gap:12px; align-items:center; }
         .headerPreview { width:100%; height:120px; border-radius:12px; background:#eef0f2 center/cover no-repeat; border:1px dashed #cbd5e1; margin-bottom:12px; }
+        .drop { border:1px dashed #cbd5e1; border-radius:10px; padding:12px; text-align:center; color:#6b7280; margin-top:10px; }
+        .drop.drag { background:#e0f2fe; border-color:#38bdf8; color:#0ea5e9; }
         @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
       `}</style>
 
@@ -85,6 +110,18 @@ export default function ProfileSettings() {
         {/* left column */}
         <section className="card">
           <div className="headerPreview" style={headerUrl ? { backgroundImage:`url(${headerUrl})` } : undefined} />
+          <div
+            className={`drop ${headerDrag ? "drag" : ""}`}
+            onDragOver={(e)=>{e.preventDefault(); setHeaderDrag(true);}}
+            onDragLeave={()=>setHeaderDrag(false)}
+            onDrop={onHeaderDrop}
+          >
+            Drag & drop a header image here or
+            <label style={{ color:"#0ea5e9", cursor:"pointer", marginLeft:4 }}>
+              browse
+              <input type="file" accept="image/*" style={{ display:"none" }} onChange={(e)=>handleFileToDataUrl(e.target.files?.[0], setHeaderUrl)} />
+            </label>
+          </div>
           <div className="stack" style={{marginBottom:14}}>
             <div className="avatar" style={avatarUrl ? { backgroundImage: `url(${avatarUrl})` } : undefined} />
             <div>
@@ -146,6 +183,20 @@ export default function ProfileSettings() {
             <label className="label" htmlFor="bio">Bio</label>
             <textarea id="bio" className="textarea" value={bio}
                       onChange={(e)=>setBio(e.target.value)} placeholder="Tell people about yourself"/>
+          </div>
+
+          <div
+            className={`drop ${avatarDrag ? "drag" : ""}`}
+            onDragOver={(e)=>{e.preventDefault(); setAvatarDrag(true);}}
+            onDragLeave={()=>setAvatarDrag(false)}
+            onDrop={onAvatarDrop}
+            style={{ marginTop:12 }}
+          >
+            Drag & drop an avatar image or
+            <label style={{ color:"#0ea5e9", cursor:"pointer", marginLeft:4 }}>
+              browse
+              <input type="file" accept="image/*" style={{ display:"none" }} onChange={(e)=>handleFileToDataUrl(e.target.files?.[0], setAvatarUrl)} />
+            </label>
           </div>
         </section>
 
