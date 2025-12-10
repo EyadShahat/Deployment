@@ -118,6 +118,17 @@ router.patch("/:id", authRequired, requireAdmin, asyncHandler(async (req, res) =
         await Video.updateMany({ owner: flag.targetId }, { hidden: !unban });
       }
     }
+    // If resolved without specifying an outcome, default to unban/unhide
+    if (flag.type === "account" && !body.outcome && body.status === "resolved") {
+      const User = (await import("../models/User.js")).default;
+      const u = await User.findById(flag.targetId);
+      if (u && u.role !== "admin") {
+        u.accountStatus = "active";
+        await u.save();
+        const Video = (await import("../models/Video.js")).default;
+        await Video.updateMany({ owner: flag.targetId }, { hidden: false });
+      }
+    }
   } catch (err) {
     console.error("Failed to update target state after flag resolution", err);
   }
