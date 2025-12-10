@@ -43,6 +43,8 @@ router.post("/", authRequired, asyncHandler(async (req, res) => {
   } else if (body.type === "account") {
     const User = (await import("../models/User.js")).default;
     await User.findByIdAndUpdate(body.targetId, { accountStatus: "flagged" });
+    const Video = (await import("../models/Video.js")).default;
+    await Video.updateMany({ owner: body.targetId }, { hidden: true });
   }
 
   res.status(201).json({ flag });
@@ -109,8 +111,11 @@ router.patch("/:id", authRequired, requireAdmin, asyncHandler(async (req, res) =
       const User = (await import("../models/User.js")).default;
       const u = await User.findById(flag.targetId);
       if (u && u.role !== "admin") {
-        u.accountStatus = body.outcome === "accepted" ? "active" : "flagged";
+        const shouldUnban = body.outcome === "denied";
+        u.accountStatus = shouldUnban ? "active" : "flagged";
         await u.save();
+        const Video = (await import("../models/Video.js")).default;
+        await Video.updateMany({ owner: flag.targetId }, { hidden: !shouldUnban });
       }
     }
   } catch (err) {
