@@ -30,27 +30,31 @@ export default function SidebarSubs() {
 
       <div className="sb-title">Subscribed channels</div>
       <div className="sb-list">
-        {subs.map((name) => (
-          <a
-            key={name}
-            className="sb-row"
-            href={`#/channel/${toSlug(name)}`}
-            title={name}
-          >
-            <div
-              className="sb-ava"
-              style={{
-                backgroundImage: (() => {
-                  const selfAva = user?.name === name ? user?.avatarUrl : "";
-                  const src = selfAva || byName.get(name);
-                  return src ? `url(${src})` : undefined;
-                })(),
-              }}
-            />
-            <div className="sb-name">{name}</div>
-            <div className="sb-open" aria-hidden>↗</div>
-          </a>
-        ))}
+        {subs.map((name) => {
+          const hasVisibleVideos = videos.some((v) => (v.channelName || v.channel) === name && v.hidden !== true);
+          if (!hasVisibleVideos) return null;
+          return (
+            <a
+              key={name}
+              className="sb-row"
+              href={`#/channel/${toSlug(name)}`}
+              title={name}
+            >
+              <div
+                className="sb-ava"
+                style={{
+                  backgroundImage: (() => {
+                    const selfAva = user?.name === name ? user?.avatarUrl : "";
+                    const src = selfAva || byName.get(name);
+                    return src ? `url(${src})` : undefined;
+                  })(),
+                }}
+              />
+              <div className="sb-name">{name}</div>
+              <div className="sb-open" aria-hidden>↗</div>
+            </a>
+          );
+        })}
       </div>
     </div>
   );
