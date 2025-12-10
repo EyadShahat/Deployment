@@ -111,11 +111,11 @@ router.patch("/:id", authRequired, requireAdmin, asyncHandler(async (req, res) =
       const User = (await import("../models/User.js")).default;
       const u = await User.findById(flag.targetId);
       if (u && u.role !== "admin") {
-        const unban = body.outcome === "denied";
-        u.accountStatus = unban ? "active" : "flagged";
+        // Regardless of outcome, resolving restores the account and videos
+        u.accountStatus = "active";
         await u.save();
         const Video = (await import("../models/Video.js")).default;
-        await Video.updateMany({ owner: flag.targetId }, { hidden: !unban });
+        await Video.updateMany({ owner: flag.targetId }, { hidden: false });
       }
     }
     // If resolved without specifying an outcome, default to unban/unhide
