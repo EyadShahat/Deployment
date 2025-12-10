@@ -6,16 +6,19 @@ export default function SearchResults({ q = "" }) {
   const [term, setTerm] = React.useState(decodeURIComponent(q || ""));
   const { videos, refreshVideos } = useNotTube();
 
-  React.useEffect(() => { refreshVideos(term); }, [term, refreshVideos]);
+  React.useEffect(() => { refreshVideos(); }, [refreshVideos]);
 
   const { videos: videoResults, channels } = React.useMemo(() => {
     const t = term.trim().toLowerCase();
-    if (!t) return { videos: [], channels: [] };
-    const vids = videos.filter(v =>
+    if (!t) return { videos, channels: [] };
+    const vidsMatched = videos.filter(v =>
       (v.title || "").toLowerCase().includes(t) ||
       (v.channelName || v.channel || "").toLowerCase().includes(t) ||
       (v.description || "").toLowerCase().includes(t)
     );
+    const matchedIds = new Set(vidsMatched.map((v) => String(v.id)));
+    const vidsOthers = videos.filter((v) => !matchedIds.has(String(v.id)));
+    const vids = [...vidsMatched, ...vidsOthers];
     const chans = Array.from(
       new Map(
         videos

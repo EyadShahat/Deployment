@@ -22,6 +22,12 @@ export default function ChannelPage({ slug }) {
   }
 
   const channelName = items[0].channelName || items[0].channel;
+  const ownerId = React.useMemo(() => {
+    const raw = items[0].owner;
+    if (!raw) return "";
+    if (typeof raw === "string") return raw;
+    return raw._id || raw.id || "";
+  }, [items]);
   const channelAvatar = (() => {
     const withAvatar = items.find((v) => v.avatarUrl);
     if (withAvatar?.avatarUrl) return withAvatar.avatarUrl;
@@ -80,6 +86,11 @@ export default function ChannelPage({ slug }) {
           <div className="cName">{channelName}</div>
           <div className="cMeta">{items.length} videos</div>
           {channelBio && <div style={{ marginTop:4, color:"#4b5563", fontSize:13 }}>{channelBio}</div>}
+          {user?.role === "admin" && ownerId && (
+            <div style={{ marginTop:6, fontSize:12, color:"#6b7280" }}>
+              User ID: <code style={{ fontFamily:"monospace" }}>{ownerId}</code>
+            </div>
+          )}
         </div>
         <button
           className={`subBtn ${isSubd ? "subd" : ""}`}
