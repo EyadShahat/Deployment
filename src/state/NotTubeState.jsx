@@ -59,8 +59,8 @@ export function NotTubeProvider({ children }) {
     return normalized;
   }, []);
 
-  const login = React.useCallback(async (email, password) => {
-    const res = await apiRequest("/auth/login", { method: "POST", body: { email, password } });
+  const login = React.useCallback(async (identifier, password) => {
+    const res = await apiRequest("/auth/login", { method: "POST", body: { identifier, password } });
     setToken(res.token);
     setUser(res.user);
     setAuthToken(res.token);
