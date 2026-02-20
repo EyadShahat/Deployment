@@ -22,6 +22,10 @@ const credsSchema = z.object({
   name: z.string().min(1).optional(),
   avatarUrl: avatarSchema,
 });
+const loginSchema = z.object({
+  identifier: z.string().min(1, "Email or username is required"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 const adminEmails = (process.env.ADMIN_EMAILS || "admin@nottube.com")
   .split(",")
@@ -104,8 +108,14 @@ router.post("/signup", asyncHandler(async (req, res) => {
 }));
 
 router.post("/login", asyncHandler(async (req, res) => {
-  const { email, password } = credsSchema.pick({ email: true, password: true }).parse(req.body);
-  const user = await User.findOne({ email: email.toLowerCase() });
+  const { identifier, password } = loginSchema.parse(req.body);
+  const normalized = identifier.trim();
+  const user = await User.findOne({
+    $or: [
+      { email: normalized.toLowerCase() },
+      { name: normalized },
+    ],
+  });
   if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
   const ok = await bcrypt.compare(password, user.passwordHash);
