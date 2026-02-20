@@ -2,20 +2,20 @@ import React from "react";
 import { useNotTube } from "../state/NotTubeState.jsx";
 
 export default function NotTubeLogin() {
-  const [email, setEmail] = React.useState("");
+  const [identifier, setIdentifier] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPw, setShowPw] = React.useState(false);
   const [error, setError] = React.useState("");
   const { login } = useNotTube();
 
-  const canSubmit = email.trim() && password.trim();
+  const canSubmit = identifier.trim() && password.trim();
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (!canSubmit) return;
     setError("");
     try {
-      await login(email.trim(), password.trim());
+      await login(identifier.trim(), password.trim());
       window.location.hash = "#/home";
     } catch (err) {
       setError(err.message || "Login failed");
@@ -107,15 +107,15 @@ export default function NotTubeLogin() {
           {error && <div style={{ color: "#b91c1c" }}>{error}</div>}
 
           <form className="form" onSubmit={handleSubmit}>
-            {/* email */}
+            {/* email or username */}
             <div className="field">
-              <label htmlFor="email" className="label">Email address/username</label>
+              <label htmlFor="identifier" className="label">Email address/username</label>
               <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e)=>setEmail(e.target.value)}
-                placeholder="you@example.com"
+                id="identifier"
+                type="text"
+                value={identifier}
+                onChange={(e)=>setIdentifier(e.target.value)}
+                placeholder="you@example.com or username"
                 className="input"
                 required
               />
